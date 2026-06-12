@@ -75,10 +75,17 @@ function bindControls() {
 
 function goDir(d) {
   if (dead) { reset(); return; }
-  if (!started) { started = true; hideOverlay(); tick(); }
+  if (!started) {
+    nextDir = d;
+    started = true;
+    hideOverlay();
+    tick();
+    return;
+  }
   if (d !== OPPOSITE[dir] && d !== dir) {
     nextDir = d;
     sfxTurn();
+    draw();
   }
 }
 
@@ -230,7 +237,7 @@ function draw() {
       const eyeR = r * 0.25;
       const off = r * 0.4;
       let x1, y1, x2, y2;
-      switch (dir) {
+      switch (nextDir) {
         case 'up':  x1 = cx - off; y1 = cy - off; x2 = cx + off; y2 = cy - off; break;
         case 'down': x1 = cx - off; y1 = cy + off; x2 = cx + off; y2 = cy + off; break;
         case 'left': x1 = cx - off; y1 = cy - off; x2 = cx - off; y2 = cy + off; break;
