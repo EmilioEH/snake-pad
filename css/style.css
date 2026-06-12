@@ -1,0 +1,28 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+body{font-family:-apple-system,system-ui,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1a1a2e;color:#eee;display:flex;justify-content:center;align-items:center}
+#app{width:100%;max-width:480px;height:100dvh;display:flex;flex-direction:column;padding:8px;gap:4px}
+
+/* Header */
+header{display:flex;justify-content:space-between;align-items:center;padding:4px 8px;flex-shrink:0}
+h1{font-size:24px;font-weight:700}
+#scoreWrap{font-size:22px;font-weight:600;display:flex;align-items:center;gap:6px}
+#score{font-variant-numeric:tabular-nums;min-width:24px;text-align:center}
+
+/* Board */
+#boardWrap{flex:1;display:flex;justify-content:center;align-items:center;position:relative;min-height:0}
+#game{border-radius:12px;display:block;max-width:100%}
+#overlay{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,.55);border-radius:12px;cursor:pointer;transition:opacity .2s}
+#overlay.hidden{opacity:0;pointer-events:none}
+#overlayText{font-size:26px;font-weight:700;color:#fff;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.5);padding:20px;line-height:1.4}
+
+/* D-Pad Controls */
+#controls{flex-shrink:0;padding:0 0 8px}
+#dpad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:6px;width:180px;height:180px;margin:0 auto}
+.d-btn{border:none;border-radius:16px;font-size:22px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .08s,filter .08s;touch-action:manipulation;box-shadow:0 3px 8px rgba(0,0,0,.3);-webkit-tap-highlight-color:transparent}
+.d-btn:active{transform:scale(.88);filter:brightness(1.25)}
+#upBtn{background:#e63946;grid-column:2;grid-row:1}
+#downBtn{background:#00b4d8;grid-column:2;grid-row:3}
+#leftBtn{background:#f4a261;grid-column:1;grid-row:2}
+#rightBtn{background:#4caf50;grid-column:3;grid-row:2}
+#dpadCenter{grid-column:2;grid-row:2;display:flex;align-items:center;justify-content:center;font-size:28px}
