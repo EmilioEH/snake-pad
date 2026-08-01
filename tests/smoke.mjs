@@ -219,6 +219,47 @@ for (const vp of [
   await page.close();
 }
 
+/* -- Reduced motion is honoured ------------------------------------------- */
+{
+  const page = await open({ reducedMotion: 'reduce' });
+  const r = await page.evaluate(() => {
+    const before = sparks.length;
+    burst(2, 2);
+    snake = [{ x: 4, y: 4 }, { x: 3, y: 4 }, { x: 2, y: 4 }];
+    prevSnake = snake.map(s => ({ ...s }));
+    dir = 'right'; turnQueue = []; started = true; dead = false;
+    return { reduceMotion, sparksAdded: sparks.length - before };
+  });
+  check('reduced motion is detected', r.reduceMotion);
+  check('reduced motion suppresses the sparkle burst', r.sparksAdded === 0, `added ${r.sparksAdded}`);
+  await page.close();
+}
+{
+  const page = await open();
+  const r = await page.evaluate(() => { const b = sparks.length; burst(2, 2); return { reduceMotion, added: sparks.length - b }; });
+  check('sparkles still fire without reduced motion', !r.reduceMotion && r.added > 0, JSON.stringify(r));
+  await page.close();
+}
+
+/* -- Switching level mid-game never draws stale coordinates --------------- */
+{
+  const page = await open();
+  const r = await page.evaluate(() => {
+    setMode('big'); reset();
+    snake = [{ x: 11, y: 11 }, { x: 10, y: 11 }];   // only valid on the 12x12 board
+    prevSnake = snake.map(s => ({ ...s }));
+    started = true;
+    cycleMode();                                     // back down to the 8x8 board
+    return {
+      board: boardSize,
+      inBounds: snake.every(s => s.x < boardSize && s.y < boardSize) &&
+                food.x < boardSize && food.y < boardSize
+    };
+  });
+  check('switching level re-seeds the board in bounds', r.board === 8 && r.inBounds, JSON.stringify(r));
+  await page.close();
+}
+
 /* -- No horizontal page scroll -------------------------------------------- */
 {
   const page = await open();

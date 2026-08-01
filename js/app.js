@@ -54,6 +54,7 @@ let cellPx = 0, boardPx = 0;
 let acc = 0, lastFrame = 0;
 let sparks = [], eatPopAt = -1e9, tongueAt = -1e9, nextBlinkAt = 0, blinkUntil = 0;
 let dieTimer;
+let reduceMotion = false;
 
 /* ----------------------------------------------------------------- audio */
 
@@ -125,8 +126,8 @@ function setMode(name) {
 
 function cycleMode() {
   setMode(MODE_ORDER[(MODE_ORDER.indexOf(modeName) + 1) % MODE_ORDER.length]);
+  reset();    // before layout(), so nothing is drawn using the old board's coordinates
   layout();
-  reset();
 }
 
 /* ------------------------------------------------------------------ init */
@@ -141,6 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
   overlayText = document.getElementById('overlayText');
   playBtn = document.getElementById('playBtn');
   modeBtn = document.getElementById('modeBtn');
+
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  reduceMotion = mq.matches;
+  mq.addEventListener?.('change', e => { reduceMotion = e.matches; if (reduceMotion) sparks = []; });
 
   loadMode();
   bindControls();
@@ -390,12 +395,15 @@ function loop(now) {
   updateSparks(dt);
   if (now >= nextBlinkAt) { blinkUntil = now + BLINK_MS; nextBlinkAt = now + BLINK_EVERY_MS + Math.random() * 2200; }
 
-  render(playing() ? Math.min(acc / mode.tick, 1) : 1, now);
+  // Reduced motion: snap cell to cell instead of gliding.
+  const alpha = reduceMotion || !playing() ? 1 : Math.min(acc / mode.tick, 1);
+  render(alpha, now);
 }
 
 /* ---------------------------------------------------------------- effects */
 
 function burst(gx, gy) {
+  if (reduceMotion) return;
   for (let i = 0; i < 12; i++) {
     const a = (Math.PI * 2 * i) / 12 + Math.random() * 0.5;
     const sp = 0.055 + Math.random() * 0.075;   // cells per ms
@@ -465,7 +473,7 @@ function render(alpha, now) {
   drawFood(now, s);
 
   // Tail first so the head sits on top.
-  const headPop = 1 + 0.3 * Math.max(0, 1 - (now - eatPopAt) / EAT_POP_MS);
+  const headPop = reduceMotion ? 1 : 1 + 0.3 * Math.max(0, 1 - (now - eatPopAt) / EAT_POP_MS);
   for (let i = snake.length - 1; i >= 0; i--) {
     const t = i / Math.max(snake.length - 1, 1);
     const c = COLORS.bodyNear.map((v, k) => Math.round(lerp(v, COLORS.bodyFar[k], t)));
@@ -480,7 +488,7 @@ function render(alpha, now) {
 }
 
 function drawFood(now, s) {
-  const pulse = 1 + 0.08 * Math.sin(now / 260);
+  const pulse = reduceMotion ? 1 : 1 + 0.08 * Math.sin(now / 260);
   const cx = food.x * s + s / 2;
   const cy = food.y * s + s / 2;
   const r = s * 0.40 * pulse;
