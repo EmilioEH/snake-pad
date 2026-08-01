@@ -1,4 +1,4 @@
-const CACHE = 'snake-pad-v1';
+const CACHE = 'snake-pad-v2';
 const ASSETS = [
   '/',
   '/index.html',

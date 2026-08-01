@@ -1,0 +1,12 @@
+{
+  "name": "snake-pad",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A friendly snake game for little ones",
+  "scripts": {
+    "test": "node tests/smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
