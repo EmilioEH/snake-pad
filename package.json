@@ -4,6 +4,7 @@
   "private": true,
   "description": "A friendly snake game for little ones",
   "scripts": {
+    "build": "echo 'no build step — static files are served as-is'",
     "test": "node tests/smoke.mjs"
   },
   "devDependencies": {

@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "snake-pad",
+  "compatibility_date": "2026-08-02",
+  // No Worker script — the whole game is static files served straight from
+  // the repo root. What gets uploaded is trimmed by .assetsignore.
+  "assets": {
+    "directory": "."
+  },
+  "observability": {
+    "enabled": true
+  }
+}
